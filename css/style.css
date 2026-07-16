@@ -75,7 +75,7 @@ header.nav.scrolled{border-color:var(--line);box-shadow:0 6px 20px -18px rgba(19
 
 /* ---------- hero ---------- */
 .hero{position:relative;padding:112px 0 96px}
-.hero-grid{display:grid;grid-template-columns:1.35fr .9fr;gap:56px;align-items:center}
+.hero-grid{display:grid;grid-template-columns:1.35fr .9fr;gap:56px;align-items:start}
 .hero h1{
   font-family:'Fraunces',serif;font-weight:500;
   font-size:clamp(2.5rem,5.4vw,4.1rem);line-height:1.04;letter-spacing:-.02em;
