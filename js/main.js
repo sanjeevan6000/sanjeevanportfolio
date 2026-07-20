@@ -324,7 +324,7 @@ form.addEventListener('submit', async (e) => {
         historyIndex = commandHistory.length;
       }
 
-      if (lower === 'sudo hire-me') {
+      if (lower === 'sudo hire-me' || lower === 'hire' || lower === 'hire-me' || lower === 'hire me') {
         const out = echoAndOutput(value);
         renderInputRow();
         await sudoHireMe(out);
