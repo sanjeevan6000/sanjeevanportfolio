@@ -3,6 +3,27 @@ document.getElementById('year').textContent = new Date().getFullYear();
 
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+// self-reported page load latency
+addEventListener('load', () => {
+  const loadMsEl = document.getElementById('loadMs');
+  if (!loadMsEl) return;
+  const nav = performance.getEntriesByType('navigation')[0];
+  const ms = nav ? Math.round(nav.domContentLoadedEventEnd) : Math.round(performance.now());
+  loadMsEl.textContent = ms;
+});
+
+// live status line — local time in Das's timezone (IST)
+const localTimeEl = document.getElementById('localTime');
+if (localTimeEl) {
+  const updateClock = () => {
+    localTimeEl.textContent = new Intl.DateTimeFormat('en-GB', {
+      timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit', hour12: false,
+    }).format(new Date());
+  };
+  updateClock();
+  setInterval(updateClock, 30000);
+}
+
 // nav scroll state
 const nav = document.getElementById('nav');
 addEventListener('scroll', () => nav.classList.toggle('scrolled', scrollY > 8));
@@ -41,7 +62,7 @@ if (terminal) {
   const wait = (ms) => new Promise(r => setTimeout(r, ms));
 
   const typeSequence = async () => {
-    await wait(reduceMotion ? 0 : 350);
+    await wait(reduceMotion ? 0 : 150);
     for (let i = 0; i < rows.length; i++) {
       const row = rows[i];
       const cmd = row.querySelector('.cmd');
@@ -56,13 +77,13 @@ if (terminal) {
       } else {
         for (let c = 0; c <= text.length; c++) {
           cmd.textContent = text.slice(0, c);
-          await wait(30 + Math.random() * 45);
+          await wait(14 + Math.random() * 22);
         }
-        await wait(250);
+        await wait(120);
       }
       if (revealEl) revealEl.classList.add('shown');
       if (!isLast && cursor) cursor.style.opacity = '0';
-      await wait(reduceMotion ? 0 : 400);
+      await wait(reduceMotion ? 0 : 180);
     }
   };
   typeSequence();
@@ -151,7 +172,19 @@ form.addEventListener('submit', async (e) => {
     if (el) el.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
   };
 
-  const helpText = "Commands: help · ls · about · experience · projects · skills · credentials · contact · resume · whoami · sudo hire-me · clear";
+  const wait = (ms) => new Promise(r => setTimeout(r, reduceMotion ? 0 : ms));
+
+  const knownCommands = ['help', 'resume', 'ls', 'about', 'experience', 'projects', 'skills', 'credentials', 'contact', 'whoami', 'sudo hire-me', 'benchmark', 'clear'];
+  const commandHistory = [];
+  let historyIndex = -1;
+
+  // matches if the whole command OR any of its words starts with the typed prefix
+  const matchCommands = (prefix) => {
+    if (!prefix) return [];
+    return knownCommands.filter(c => c.startsWith(prefix) || c.split(' ').some(w => w.startsWith(prefix)));
+  };
+
+  const helpText = "Commands: help · resume · ls · about · experience · projects · skills · credentials · contact · whoami · benchmark · sudo hire-me · clear";
 
   const runCommand = (raw) => {
     const cmd = raw.trim();
@@ -168,22 +201,146 @@ form.addEventListener('submit', async (e) => {
     if (lower === 'credentials' || lower === 'cd credentials') { scrollToId('credentials'); return { text: 'Opening credentials.md…', ok: true }; }
     if (lower === 'contact' || lower === 'cd contact') { scrollToId('contact'); return { text: 'Opening contact form…', ok: true }; }
     if (lower === 'resume' || lower === './resume') { document.getElementById('resumeBtn').click(); return { text: 'Downloading Das_Sanjeevan_Resume.pdf…', ok: true }; }
-    if (lower === 'sudo hire-me') { scrollToId('contact'); return { text: 'Permission granted. Redirecting to contact…', ok: true }; }
-    return { text: `command not found: ${cmd} — type 'help' for available commands`, err: true };
+    return { text: `command not found: ${cmd} — try 'help', or just use the menu above.`, err: true };
+  };
+
+  const echoAndOutput = (value) => {
+    if (value.trim()) {
+      const done = document.createElement('div');
+      done.className = 'term-row';
+      const echoCmd = document.createElement('span');
+      echoCmd.textContent = value;
+      done.innerHTML = '<span class="prompt">$</span>';
+      done.appendChild(echoCmd);
+      consoleEl.appendChild(done);
+    }
+    const out = document.createElement('div');
+    out.className = 'term-out';
+    consoleEl.appendChild(out);
+    consoleEl.scrollTop = consoleEl.scrollHeight;
+    return out;
+  };
+
+  const sudoHireMe = async (out) => {
+    out.textContent = '[sudo] password for recruiter: ********';
+    await wait(500);
+    const authLine = document.createElement('div');
+    authLine.className = 'term-out';
+    consoleEl.appendChild(authLine);
+    authLine.textContent = 'Authenticating…';
+    await wait(600);
+    authLine.textContent = '✓ Access granted — Das is available for Senior/Lead backend & AI roles.';
+    authLine.classList.add('ok');
+    await wait(500);
+    scrollToId('contact');
+  };
+
+  const benchmark = (out) => {
+    const nav = performance.getEntriesByType('navigation')[0];
+    const durations = performance.getEntriesByType('resource')
+      .map(e => e.duration)
+      .filter(d => d > 0);
+    if (nav) durations.push(nav.duration);
+    durations.sort((a, b) => a - b);
+    if (!durations.length) {
+      out.textContent = 'No timing data available yet — try again after the page settles.';
+      out.classList.add('err');
+      return;
+    }
+    const pct = (p) => durations[Math.min(Math.floor(durations.length * p), durations.length - 1)];
+    const median = pct(0.5).toFixed(1);
+    const p95 = pct(0.95).toFixed(1);
+    const slowest = durations[durations.length - 1].toFixed(1);
+    out.textContent = `Benchmarked ${durations.length} real requests from this page load → median: ${median}ms · p95: ${p95}ms · slowest: ${slowest}ms`;
+    out.classList.add('ok');
   };
 
   const renderInputRow = () => {
     const row = document.createElement('div');
     row.className = 'term-input-row';
-    row.innerHTML = '<span class="prompt">$</span><input type="text" class="term-input" autocomplete="off" spellcheck="false" placeholder="type \'help\'">';
+    row.innerHTML = '<span class="prompt">$</span><input type="text" class="term-input" autocomplete="off" spellcheck="false" placeholder="try: help, skills, hire">';
     consoleEl.appendChild(row);
     const input = row.querySelector('input');
-    input.addEventListener('keydown', (e) => {
+    row.addEventListener('click', () => input.focus());
+
+    const suggestEl = document.createElement('div');
+    suggestEl.className = 'term-suggest';
+    consoleEl.appendChild(suggestEl);
+
+    input.addEventListener('input', () => {
+      const partial = input.value.trim().toLowerCase();
+      if (!partial) { suggestEl.innerHTML = ''; return; }
+      const matches = matchCommands(partial).slice(0, 3);
+      suggestEl.innerHTML = matches.length
+        ? `→ ${matches.map(m => `<b>${m}</b>`).join(', ')}`
+        : '';
+    });
+
+    input.addEventListener('keydown', async (e) => {
+      if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        if (!commandHistory.length) return;
+        historyIndex = Math.max(historyIndex - 1, 0);
+        input.value = commandHistory[historyIndex];
+        suggestEl.innerHTML = '';
+        return;
+      }
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        if (!commandHistory.length) return;
+        historyIndex = Math.min(historyIndex + 1, commandHistory.length);
+        input.value = historyIndex === commandHistory.length ? '' : commandHistory[historyIndex];
+        suggestEl.innerHTML = '';
+        return;
+      }
+      if (e.key === 'Tab') {
+        e.preventDefault();
+        const partial = input.value.trim().toLowerCase();
+        if (!partial) return;
+        const matches = matchCommands(partial);
+        if (matches.length === 1) {
+          input.value = matches[0];
+          suggestEl.innerHTML = '';
+        } else if (matches.length > 1) {
+          const typed = input.value;
+          row.remove();
+          suggestEl.remove();
+          const out = echoAndOutput(typed);
+          out.textContent = matches.join('  ');
+          renderInputRow();
+        }
+        return;
+      }
       if (e.key !== 'Enter') return;
+
       const value = input.value;
-      const result = runCommand(value);
+      const trimmed = value.trim();
+      const lower = trimmed.toLowerCase();
       row.remove();
-      if (value.trim()) {
+      suggestEl.remove();
+
+      if (trimmed) {
+        commandHistory.push(trimmed);
+        historyIndex = commandHistory.length;
+      }
+
+      if (lower === 'sudo hire-me') {
+        const out = echoAndOutput(value);
+        renderInputRow();
+        await sudoHireMe(out);
+        consoleEl.scrollTop = consoleEl.scrollHeight;
+        return;
+      }
+      if (lower === 'benchmark' || lower === './benchmark') {
+        const out = echoAndOutput(value);
+        renderInputRow();
+        benchmark(out);
+        consoleEl.scrollTop = consoleEl.scrollHeight;
+        return;
+      }
+
+      const result = runCommand(value);
+      if (trimmed) {
         const done = document.createElement('div');
         done.className = 'term-row';
         const echoCmd = document.createElement('span');
