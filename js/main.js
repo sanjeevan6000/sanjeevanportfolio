@@ -222,17 +222,56 @@ form.addEventListener('submit', async (e) => {
   };
 
   const sudoHireMe = async (out) => {
-    out.textContent = '[sudo] password for recruiter: ********';
-    await wait(500);
-    const authLine = document.createElement('div');
-    authLine.className = 'term-out';
-    consoleEl.appendChild(authLine);
-    authLine.textContent = 'Authenticating…';
-    await wait(600);
-    authLine.textContent = '✓ Access granted — Das is available for Senior/Lead backend & AI roles.';
-    authLine.classList.add('ok');
-    await wait(500);
-    scrollToId('contact');
+    out.textContent = 'Initiating secure handshake…';
+
+    const overlay = document.getElementById('hireOverlay');
+    if (!overlay) { scrollToId('contact'); return; }
+
+    const line1 = document.getElementById('hireLine1');
+    const line2 = document.getElementById('hireLine2');
+    const barTrack = document.querySelector('.hire-bar-track');
+    const barFill = document.getElementById('hireBarFill');
+    const result = document.getElementById('hireResult');
+
+    line1.classList.remove('shown');
+    line2.classList.remove('shown');
+    barTrack.classList.remove('shown');
+    barFill.style.width = '0%';
+    result.classList.remove('shown');
+
+    overlay.classList.add('open');
+
+    if (reduceMotion) {
+      line1.classList.add('shown');
+      line2.classList.add('shown');
+      barTrack.classList.add('shown');
+      barFill.style.width = '100%';
+      result.classList.add('shown');
+    } else {
+      await wait(60);
+      line1.classList.add('shown');
+      await wait(500);
+      line2.classList.add('shown');
+      await wait(300);
+      barTrack.classList.add('shown');
+      await wait(30);
+      barFill.style.width = '100%';
+      await wait(900);
+      result.classList.add('shown');
+    }
+
+    let dismissed = false;
+    const dismiss = () => {
+      if (dismissed) return;
+      dismissed = true;
+      overlay.classList.remove('open');
+      scrollToId('contact');
+    };
+    overlay.addEventListener('click', dismiss, { once: true });
+    const onEscape = (e) => { if (e.key === 'Escape') { dismiss(); document.removeEventListener('keydown', onEscape); } };
+    document.addEventListener('keydown', onEscape);
+    await wait(reduceMotion ? 300 : 2200);
+    dismiss();
   };
 
   const benchmark = (out) => {
@@ -258,7 +297,7 @@ form.addEventListener('submit', async (e) => {
   const renderInputRow = () => {
     const row = document.createElement('div');
     row.className = 'term-input-row';
-    row.innerHTML = '<span class="prompt">$</span><input type="text" class="term-input" autocomplete="off" spellcheck="false" placeholder="try: help, skills, hire">';
+    row.innerHTML = '<span class="prompt">$</span><input type="text" class="term-input" autocomplete="off" spellcheck="false" placeholder="try: help, skills, hire-me">';
     consoleEl.appendChild(row);
     const input = row.querySelector('input');
     row.addEventListener('click', () => input.focus());
