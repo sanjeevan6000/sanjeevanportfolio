@@ -152,7 +152,7 @@
             engineering</span></div>
         <div class="hm"><span class="n"><span class="count" data-target="100">0</span><small>+</small></span><span class="l">Microservices in the ecosystem</span>
         </div>
-        <div class="hm"><span class="n">~<span class="count" data-target="3">0</span><small>M</small></span><span class="l">Subscribers migrated in merger</span>
+        <div class="hm"><span class="n">~<span class="count" data-target="11">0</span><small>M</small></span><span class="l">Subscribers migrated in merger</span>
         </div>
         <div class="hm"><span class="n">&lt;<span class="count" data-target="200">0</span><small>ms</small></span><span class="l">API response under load</span>
         </div>
@@ -230,12 +230,17 @@
                 lifecycle management, and telecom business operations.</li>
               <li>Build scalable Spring Boot microservices and REST APIs with Java, Spring Cloud, Hibernate, JPA, Redis,
                 MySQL and MariaDB across a 100+ microservice ecosystem.</li>
+              <li>Implemented Elasticsearch-backed search and retrieval for high-volume partner and transaction data,
+                cutting query latency and offloading expensive reads from the relational database.</li>
+              <li>Secure enterprise APIs and microservices with Spring Security, OAuth 2.0, JWT authentication and
+                role-based access control (RBAC).</li>
               <li>Created an end-to-end Playwright test suite that runs headlessly from a single command — raising live
                 orders, capturing screenshots, and auto-generating error reports, cutting manual QA effort
                 significantly.</li>
-              <li>Drive the full delivery lifecycle: architecture, code reviews, CI/CD deployment, production releases
-                and incident resolution while maintaining high availability.</li>
-              <li>Played a key role in the Celcom–Digi platform consolidation, supporting migration of ~3 million
+              <li>Drive the full delivery lifecycle: architecture, code reviews, CI/CD via Azure DevOps, GitLab, GitHub,
+                Jenkins and Maven, production releases, and root-cause incident resolution while maintaining high
+                availability.</li>
+              <li>Played a key role in the Celcom–Digi platform consolidation, supporting migration of ~11 million
                 subscribers after the merger.</li>
             </ul>
           </div>
@@ -295,19 +300,19 @@
       <div class="sec-head reveal">
         <span class="eyebrow">AI &amp; Innovation</span>
         <h2>Applied Generative &amp; Agentic AI.</h2>
-        <p>Proofs-of-concept where LLMs do real work inside enterprise systems.</p>
+        <p>Production systems where LLMs do real work inside enterprise systems.</p>
       </div>
       <div class="proj-grid">
         <article class="proj reveal">
           <span class="num">01</span>
           <span class="tag">Agentic Systems</span>
           <h3>Telecom Order Recovery Agent</h3>
-          <div class="status">Sep 2025 — Present · Proof of Concept</div>
-          <p>An AI agent that automates telecom BSS order-recovery workflows. Multi-agent orchestration identifies
-            failed order states and recommends automated recovery actions, grounded in SOP documentation via retrieval.
-          </p>
+          <div class="status">Sep 2025 — Present · In Production</div>
+          <p>An AI agent deployed to production that automates telecom BSS order-recovery workflows against live
+            enterprise order traffic. Multi-agent orchestration identifies failed order states and recommends
+            automated recovery actions, grounded in SOP documentation retrieved from a Pinecone vector store.</p>
           <div class="stack">
-            <span>LangGraph</span><span>LangChain</span><span>RAG</span><span>ChromaDB</span><span>MCP</span></div>
+            <span>LangGraph</span><span>LangChain</span><span>RAG</span><span>Pinecone</span><span>MCP</span></div>
         </article>
         <article class="proj reveal">
           <span class="num">02</span>
@@ -317,7 +322,7 @@
           <p>Retrieval-Augmented Generation over telecom standard-operating-procedure documentation — letting the system
             reason over real internal knowledge to diagnose issues and suggest next actions rather than guessing.</p>
           <div class="stack"><span>OpenAI</span><span>Anthropic Claude</span><span>Prompt
-              Engineering</span><span>ChromaDB</span></div>
+              Engineering</span><span>Pinecone</span></div>
         </article>
       </div>
     </div>
@@ -337,9 +342,10 @@
         <div class="json-body">
           <div class="jl">{</div>
           <div class="jl i1"><span class="jk">"backend"</span><span class="jp">:</span> [<span class="js">"Java"</span>, <span class="js">"Spring Boot"</span>, <span class="js">"Spring MVC"</span>, <span class="js">"Spring Cloud"</span>, <span class="js">"Hibernate"</span>, <span class="js">"Spring Data JPA"</span>, <span class="js">"REST APIs"</span>, <span class="js">"Microservices"</span>, <span class="js">"Distributed Systems"</span>]<span class="jp">,</span></div>
-          <div class="jl i1"><span class="jk">"data_caching"</span><span class="jp">:</span> [<span class="js">"MySQL"</span>, <span class="js">"MariaDB"</span>, <span class="js">"Oracle"</span>, <span class="js">"Redis"</span>]<span class="jp">,</span></div>
-          <div class="jl i1"><span class="jk">"cloud_devops"</span><span class="jp">:</span> [<span class="js">"CI/CD"</span>, <span class="js">"Jenkins"</span>, <span class="js">"Maven"</span>, <span class="js">"GitLab"</span>, <span class="js">"GitHub"</span>, <span class="js">"Docker"</span>, <span class="js">"Swagger"</span>, <span class="js">"Postman"</span>]<span class="jp">,</span></div>
-          <div class="jl i1"><span class="jk">"generative_ai_llm"</span><span class="jp">:</span> [<span class="js">"LangChain"</span>, <span class="js">"LangGraph"</span>, <span class="js">"RAG"</span>, <span class="js">"MCP"</span>, <span class="js">"OpenAI API"</span>, <span class="js">"Anthropic Claude"</span>, <span class="js">"ChromaDB"</span>, <span class="js">"AI Agents"</span>]<span class="jp">,</span></div>
+          <div class="jl i1"><span class="jk">"databases"</span><span class="jp">:</span> [<span class="js">"MySQL"</span>, <span class="js">"MariaDB"</span>, <span class="js">"Oracle"</span>, <span class="js">"Elasticsearch"</span>, <span class="js">"Redis"</span>, <span class="js">"Pinecone"</span>]<span class="jp">,</span></div>
+          <div class="jl i1"><span class="jk">"cloud_devops"</span><span class="jp">:</span> [<span class="js">"Microsoft Azure"</span>, <span class="js">"Apache Kafka"</span>, <span class="js">"CI/CD"</span>, <span class="js">"Jenkins"</span>, <span class="js">"Maven"</span>, <span class="js">"GitLab"</span>, <span class="js">"GitHub"</span>, <span class="js">"Docker"</span>, <span class="js">"Swagger"</span>, <span class="js">"Postman"</span>]<span class="jp">,</span></div>
+          <div class="jl i1"><span class="jk">"generative_ai_llm"</span><span class="jp">:</span> [<span class="js">"LangChain"</span>, <span class="js">"LangGraph"</span>, <span class="js">"Multi-Agent Orchestration"</span>, <span class="js">"RAG"</span>, <span class="js">"MCP"</span>, <span class="js">"OpenAI API"</span>, <span class="js">"Anthropic Claude"</span>, <span class="js">"AI Agents"</span>]<span class="jp">,</span></div>
+          <div class="jl i1"><span class="jk">"ai_assisted_dev"</span><span class="jp">:</span> [<span class="js">"Claude Code"</span>, <span class="js">"GitHub Copilot"</span>, <span class="js">"Codex"</span>, <span class="js">"Cursor"</span>, <span class="js">"Kiro"</span>]<span class="jp">,</span></div>
           <div class="jl i1"><span class="jk">"security_quality"</span><span class="jp">:</span> [<span class="js">"OAuth 2.0"</span>, <span class="js">"JWT"</span>, <span class="js">"Spring Security"</span>, <span class="js">"RBAC"</span>, <span class="js">"API Security"</span>, <span class="js">"Playwright"</span>, <span class="js">"JUnit"</span>, <span class="js">"SonarQube"</span>]<span class="jp">,</span></div>
           <div class="jl i1"><span class="jk">"languages_leadership"</span><span class="jp">:</span> [<span class="js">"SQL"</span>, <span class="js">"Python"</span>, <span class="js">"JavaScript"</span>, <span class="js">"Team Leadership"</span>, <span class="js">"Code Reviews"</span>, <span class="js">"Agile Delivery"</span>]</div>
           <div class="jl">}</div>
